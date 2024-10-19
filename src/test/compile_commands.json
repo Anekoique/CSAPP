@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/lib",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/include",
+      "-I",
+      ".",
+      "test.c"
+    ],
+    "directory": "/home/stoair/CSAPP/src",
+    "file": "/home/stoair/CSAPP/src/test.c"
+  }
+]

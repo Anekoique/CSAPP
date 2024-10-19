@@ -1,0 +1,128 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O",
+      "-Wall",
+      "-m32",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/lib",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/include",
+      "-I",
+      ".",
+      "-o",
+      "btest",
+      "bits.c"
+    ],
+    "directory": "/home/stoair/CSAPP/DataLab",
+    "file": "/home/stoair/CSAPP/DataLab/bits.c",
+    "output": "/home/stoair/CSAPP/DataLab/btest"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O",
+      "-Wall",
+      "-m32",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/lib",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/include",
+      "-I",
+      ".",
+      "-o",
+      "btest",
+      "btest.c"
+    ],
+    "directory": "/home/stoair/CSAPP/DataLab",
+    "file": "/home/stoair/CSAPP/DataLab/btest.c",
+    "output": "/home/stoair/CSAPP/DataLab/btest"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O",
+      "-Wall",
+      "-m32",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/lib",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/include",
+      "-I",
+      ".",
+      "-o",
+      "btest",
+      "decl.c"
+    ],
+    "directory": "/home/stoair/CSAPP/DataLab",
+    "file": "/home/stoair/CSAPP/DataLab/decl.c",
+    "output": "/home/stoair/CSAPP/DataLab/btest"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O",
+      "-Wall",
+      "-m32",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/lib",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/include",
+      "-I",
+      ".",
+      "-o",
+      "btest",
+      "tests.c"
+    ],
+    "directory": "/home/stoair/CSAPP/DataLab",
+    "file": "/home/stoair/CSAPP/DataLab/tests.c",
+    "output": "/home/stoair/CSAPP/DataLab/btest"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O",
+      "-Wall",
+      "-m32",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/lib",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/include",
+      "-I",
+      ".",
+      "-o",
+      "fshow",
+      "fshow.c"
+    ],
+    "directory": "/home/stoair/CSAPP/DataLab",
+    "file": "/home/stoair/CSAPP/DataLab/fshow.c",
+    "output": "/home/stoair/CSAPP/DataLab/fshow"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O",
+      "-Wall",
+      "-m32",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/lib",
+      "-I",
+      "/usr/local/cuda-12.1/targets/x86_64-linux/include",
+      "-I",
+      ".",
+      "-o",
+      "ishow",
+      "ishow.c"
+    ],
+    "directory": "/home/stoair/CSAPP/DataLab",
+    "file": "/home/stoair/CSAPP/DataLab/ishow.c",
+    "output": "/home/stoair/CSAPP/DataLab/ishow"
+  }
+]
