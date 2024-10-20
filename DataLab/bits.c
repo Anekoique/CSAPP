@@ -147,13 +147,13 @@ int bitXor(int x, int y)
 }
 /*
  * tmin - return minimum two's complement integer 0x80000000 00000008
- *   Legal ops: ! ~ & ^ | + << >> 
+ *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 4
  *   Rating: 1
- */ 
+ */
 int tmin(void)
 {
-    return 8 << 28;
+    return 1 << 31;
 }
 // 2
 /*
@@ -202,7 +202,7 @@ int negate(int x)
  */
 int isAsciiDigit(int x)
 {
-    return (!((x >> 4) ^ 3)) & (!(x & 8) | (!(x ^ 56) | !(x ^ 57)));
+    return (!((x >> 4) ^ 3)) & ((!(x & 8)) | (!(x ^ 56) | !(x ^ 57)));
 }
 /*
  * conditional - same as x ? y : z
@@ -213,7 +213,9 @@ int isAsciiDigit(int x)
  */
 int conditional(int x, int y, int z)
 {
-    return 2;
+    // int mask= ~!x + 1;
+    int mask = (!x << 31) >> 31;
+    return (y & ~mask) | (z & mask);
 }
 /*
  * isLessOrEqual - if x <= y  then return 1, else return 0
@@ -224,7 +226,12 @@ int conditional(int x, int y, int z)
  */
 int isLessOrEqual(int x, int y)
 {
-    return 2;
+    int sign_x = !!(x >> 31);
+    int sign_y = !!(y >> 31);
+
+    int equal = (sign_x & sign_y) | (!sign_x & !sign_y);
+
+    return (!(x ^ y)) | (sign_x & !sign_y) | (equal & !((~x + y + 1) >> 31));
 }
 // 4
 /*
@@ -237,7 +244,7 @@ int isLessOrEqual(int x, int y)
  */
 int logicalNeg(int x)
 {
-    return 2;
+    return ((x | (~x + 1)) >> 31) + 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -253,7 +260,28 @@ int logicalNeg(int x)
  */
 int howManyBits(int x)
 {
-    return 0;
+    int sign = x >> 31;
+
+    x = x ^ sign;
+
+    int b16 = !!(x >> 16) << 4;
+    x = x >> b16;
+
+    int b8 = !!(x >> 8) << 3;
+    x = x >> b8;
+
+    int b4 = !!(x >> 4) << 2;
+    x = x >> b4;
+
+    int b2 = !!(x >> 2) << 1;
+    x = x >> b2;
+
+    int b1 = !!(x >> 1);
+    x = x >> b1;
+
+    int b0 = x;
+
+    return b16 + b8 + b4 + b2 + b1 + b0 + 1;
 }
 // float
 /*
@@ -269,7 +297,62 @@ int howManyBits(int x)
  */
 unsigned floatScale2(unsigned uf)
 {
-    return 2;
+    // unsigned int sign = uf >> 31;
+    // unsigned int exponent = (uf >> 23) & 0x000000ff;
+    // unsigned int fraction = uf & ~((1 << 31) >> 8);
+
+    // if (exponent && (exponent ^ 0x000000ff))
+    // {
+    //     exponent += 1;
+    //     uf = (((sign << 8) + exponent) << 23) + fraction;
+    // }
+    // else if (!exponent)
+    // {
+    //     // 这里没有考虑非规格化数乘2转到规格化数的情况
+    //     if (!(exponent >> 22))
+    //     {
+    //        fraction = fraction << 1;
+    //        uf = (((sign << 8) + exponent) << 23) + fraction;
+    //     }
+    // }
+
+    // return uf;
+
+    // GPT解决
+    unsigned sign = uf & (1 << 31);   // 提取符号位 (最高位)
+    unsigned exp = (uf >> 23) & 0xFF; // 提取指数部分 (8位)
+    unsigned frac = uf & 0x7FFFFF;    // 提取尾数部分 (23位)
+
+    // NaN 或无穷大：如果指数部分全为 1（255），直接返回 uf
+    if (exp == 0xFF)
+    {
+        return uf;
+    }
+
+    // 处理非规格化数 (exp == 0)
+    if (exp == 0)
+    {
+        frac <<= 1; // 尾数左移模拟乘以2
+        // 如果尾数变成规格化数（最高位为1），指数需要调整
+        if (frac & (1 << 23))
+        {
+            exp = 1;
+            frac &= 0x7FFFFF; // 清除最高位
+        }
+    }
+    else
+    {
+        // 处理规格化数：增加指数
+        exp += 1;
+        // 如果指数溢出为 255（无穷大）
+        if (exp == 0xFF)
+        {
+            frac = 0; // 无穷大的尾数为 0
+        }
+    }
+
+    // 重新拼接浮点数的位表示
+    return sign | (exp << 23) | frac;
 }
 /*
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -285,7 +368,42 @@ unsigned floatScale2(unsigned uf)
  */
 int floatFloat2Int(unsigned uf)
 {
-    return 2;
+    int exp = (uf >> 23) & 0xFF;
+    int frac = uf & 0x007FFFFF;
+    int sign = uf & 0x80000000;
+    int bias = exp - 127;
+
+    if (exp == 255 || bias > 30)
+    {
+        // exponent is 255 (NaN), or number is too large for an int
+        return 0x80000000u;
+    }
+    else if (!exp || bias < 0)
+    {
+        // number is very small, round down to 0
+        return 0;
+    }
+
+    // append a 1 to the front to normalize
+    frac = frac | 1 << 23;
+
+    // float based on the bias
+    if (bias > 23)
+    {
+        frac = frac << (bias - 23);
+    }
+    else
+    {
+        frac = frac >> (23 - bias);
+    }
+
+    if (sign)
+    {
+        // original number was negative, make the new number negative
+        frac = ~(frac) + 1;
+    }
+
+    return frac;
 }
 /*
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -302,5 +420,29 @@ int floatFloat2Int(unsigned uf)
  */
 unsigned floatPower2(int x)
 {
-    return 2;
+    int k = 23;
+    int bias = 127;
+    unsigned frac;
+    unsigned exp;
+
+    if (x > bias)
+    {
+        return 0x7F800000;
+    }
+    else if (x >= -bias)
+    {
+        exp = x + bias;
+        frac = 0;
+    }
+    else if (x >= -bias - k + 2)
+    {
+        exp = 0;
+        frac = 1 << (bias + k - 2 + x);
+    }
+    else
+    {
+        return 0x0;
+    }
+
+    return (exp << k) | frac;
 }
