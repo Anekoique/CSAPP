@@ -44,6 +44,7 @@ unsigned floatScale2(unsigned uf)
 
 int main()
 {
-	printf("%.2x", floatScale2(0x7f800000));
+    unsigned char a = -1;
+    printf("%d", a);
     return 0;
 }
